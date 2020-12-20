@@ -3,17 +3,18 @@
 
 #include <iostream>
 #include "MinStack.h"
+#include "Matrix.h"
 using namespace std;
 
 int main()
 {
-    std::cout << "Hello World!\n";
-    MinStack minstack;
-    minstack.push(3);
-    minstack.push(2);
-    cout << minstack.getMin();
+    vector<vector<int>> A, B, C;
+    A = { {1,2,3}, {4,5,6} };
+    B = { {7,8}, {9,10}, {11,12} };
+    Matrix matrix;
+    C = matrix.matrixMulti(A, B);
+    matrix.print(C);
 }
-
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu
 
