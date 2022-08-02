@@ -1,0 +1,166 @@
+class LFUCache {
+public:
+    unordered_map<int,list<int>> m;
+    unordered_map<int, int> freqs;
+    unordered_map<int, int> values;
+    unordered_map<int, list<int>::iterator> nodes;
+    int capacity;
+    int leastFreq = 0;
+    LFUCache(int capacity) {
+        this->capacity = capacity;
+    }
+    
+    int get(int key) {
+        if (values.find(key) == values.end()) {
+            return -1;
+        }
+        updateCounter(key);
+        return values[key];
+    }
+    
+    void put(int key, int value) {
+        if (capacity <= 0) {
+            return;
+        }
+        if (values.size() == capacity) {
+            evict();
+        }
+        updateCounter(key);
+        values[key] = value;
+    }
+    
+    void evict() {
+        int evictKey = m[leastFreq].back();
+        m[leastFreq].pop_back();
+        //update least frequency
+        if (freqs[evictKey] == leastFreq) {
+            if (m[leastFreq].empty()) {
+                m.erase(leastFreq);
+            }
+        }
+        values.erase(evictKey);
+        freqs.erase(evictKey);
+        nodes.erase(evictKey);
+    }
+    
+    void updateCounter(int key) {
+        if (values.find(key) == values.end()) {
+            m[1].push_front(key);
+            nodes[key] = m[1].begin();
+            freqs[key] = 1;
+            leastFreq = 1;
+        } else {
+            int freq = freqs[key];
+            m[freq].erase(nodes[key]);
+            //update least frequency
+            if (m[freq].empty()) {
+                if (leastFreq == freq) {
+                    ++leastFreq;
+                }
+                m.erase(freq);
+            }
+            //update
+            int newFreq = ++freqs[key];
+            m[newFreq].push_front(key);
+            nodes[key] = m[newFreq].begin();
+        }
+    }
+    
+};
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * LFUCache* obj = new LFUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
+
+/*
+
+//Just for better readability
+using Key_t = int;
+using Count_t = int;
+
+
+struct Node
+{
+    int value;
+    list<Key_t>::iterator itr;
+};
+
+class LFUCache
+{
+    unordered_map<Key_t, Node> m_values;
+    unordered_map<Key_t, Count_t> m_counts;
+    unordered_map<Count_t, list<Key_t>> m_countKeyMap;
+    int m_lowestFrequency;
+    int m_maxCapacity;
+
+public:
+    LFUCache(int capacity)
+    {
+        m_maxCapacity = capacity;
+        m_lowestFrequency = 0;
+    }
+
+    int get(int key)
+    {
+        if (m_values.find(key) == m_values.end() || m_maxCapacity <= 0)
+        {
+            return -1;
+        }
+        //update frequency, & return value
+        put(key, m_values[key].value);
+        return m_values[key].value;
+    }
+
+    void put(int key, int value)
+    {
+        if (m_maxCapacity <= 0)
+        {
+            return;
+        }
+        //If key is not present and capacity has exceeded,
+        //then remove the key entry with least frequency
+        //else just make the new key entry
+        if (m_values.find(key) == m_values.end())
+        {
+            if (m_values.size() == m_maxCapacity) {
+                evict();
+            }
+            m_values[key].value = value;
+            m_counts[key] = 0;
+            m_lowestFrequency = 0;
+            m_countKeyMap[m_counts[key]].push_front(key);
+            m_values[key].itr = m_countKeyMap[0].begin();
+        }
+        //Just update value and frequency
+        else
+        {
+            m_countKeyMap[m_counts[key]].erase(m_values[key].itr);
+            if (m_countKeyMap[m_counts[key]].empty())
+            {
+                if (m_lowestFrequency == m_counts[key])
+                    m_lowestFrequency++;
+                m_countKeyMap.erase(m_counts[key]);
+            }
+            m_values[key].value = value;
+            m_counts[key]++;
+            m_countKeyMap[m_counts[key]].push_front(key);
+            m_values[key].itr = m_countKeyMap[m_counts[key]].begin();
+        }
+    }
+    
+    void evict() {
+
+                int keyToDelete = m_countKeyMap[m_lowestFrequency].back(); 
+                m_countKeyMap[m_lowestFrequency].pop_back();
+                if (m_countKeyMap[m_lowestFrequency].empty())
+                {
+                    m_countKeyMap.erase(m_lowestFrequency);
+                }
+                m_values.erase(keyToDelete);
+                m_counts.erase(keyToDelete);
+    }
+};
+*/

@@ -15,7 +15,7 @@ class Solution {
      * @return: true if it's a valid tree, or false
      */
     enum {UNVISITED, VISITING, VISITED};
-    bool validTree(int n, vector<vector<int> > &edges) {
+    bool validTree(int n, vector<vector<int> >& edges) {
         // write your code here
         vector<vector<int> > adj(n, vector<int>());
         state = vector<int>(n, UNVISITED);
